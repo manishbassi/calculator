@@ -14,4 +14,10 @@ public interface Constants {
     String INVALID_FUNCTION = "Invalid Function";
     String DIVIDE_BY_ZERO = "Can't divide by zero";
     String OUT_OF_RANGE = "Out of range";
+    /**
+     * Expression Constants
+     */
+    Character OPEN_BRACKET = '(';
+    Character CLOSE_BRACKET = ')';
+    Character COMMA = ',';
 }

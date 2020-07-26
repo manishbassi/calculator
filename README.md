@@ -21,6 +21,10 @@ java calculator.Main "add(2, 2)"
 As with arithmetic functions, the value expression and the expression where the variable is used may be an arbitrary expression from this list. 
 
 ### Build this project
+
+#### Environment
+This project is using OpenJDK11.
+
 #### Continuous Integration
 It has been integrated with codeship for Continuos integration. Build will be triggered automatically once new commit
 /merge is detected to master branch.
@@ -41,4 +45,6 @@ Once build, we can use jar with suffic (jar-with-dependencies), We can use follo
 
 ```
 java -jar target/calculator-1.0-jar-with-dependencies.jar "add(1,2)" "info"
+java -jar target/calculator-1.0-jar-with-dependencies.jar "add(1, mult(2,3))"
+java -jar target/calculator-1.0-jar-with-dependencies.jar "let(a, 5, add(a,a))" 
 ```

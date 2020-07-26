@@ -35,9 +35,10 @@ public class MainController {
      */
     private static void validateArguments(String[] args) throws CalculatorException {
         if (null == args || args.length == 0) {
-            LOGGER.warn("Proper usage: java -jar calculator-1.0-SNAPSHOT-jar-with-dependencies.jar <EXPRESSION> <OPTIONAL-LOG-LEVEL>");
+            LOGGER.warn("Proper usage: java -jar calculator-1.0-jar-with-dependencies.jar <EXPRESSION> [OPTIONAL-LOG-LEVEL]");
             throw new CalculatorException(INVALID_ARGUMENTS);
         }
+        // If a log-level is specified, extract it from arguments.
         if (args.length > 1) {
             String logLevel = args[1];
             if (LoggingUtil.isSupported(logLevel)) {
