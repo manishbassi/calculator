@@ -3,7 +3,7 @@
 Calculator program in Java that evaluates expressions in a very simple integer expression language. The program takes an input on the command line, computes the result, and prints it to the console. 
 
 For example :
-java calculator.Main "add(2, 2)"
+java com.interview.calculator.controller.MainController "add(2, 2)"
 4
 
 ### Assumptions :
@@ -41,7 +41,7 @@ mvn clean install
 ```
 
 ### Run this project
-Once build, we can use jar with suffic (jar-with-dependencies), We can use following command to send out expressions and logging level to the jar
+Once build, we can use jar with suffix (jar-with-dependencies), We can use following command to send out expressions and optional logging level to the jar
 
 ```
 java -jar target/calculator-1.0-jar-with-dependencies.jar "add(1,2)" "info"
