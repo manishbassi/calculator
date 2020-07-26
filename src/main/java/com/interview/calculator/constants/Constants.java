@@ -13,4 +13,5 @@ public interface Constants {
     String INVALID_LOG_LEVEL = "Invalid Log Level";
     String INVALID_FUNCTION = "Invalid Function";
     String DIVIDE_BY_ZERO = "Can't divide by zero";
+    String OUT_OF_RANGE = "Out of range";
 }

@@ -3,8 +3,7 @@ package com.interview.calculator.parser;
 import com.interview.calculator.exception.CalculatorException;
 import org.junit.jupiter.api.Test;
 
-import static com.interview.calculator.constants.Constants.DIVIDE_BY_ZERO;
-import static com.interview.calculator.constants.Constants.INVALID_EXPRESSION;
+import static com.interview.calculator.constants.Constants.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -95,6 +94,13 @@ class ExpressionParserTest {
     }
 
     @Test
+    void nestedLet4() throws CalculatorException {
+        String expression = "let(a, let(b, let(c, 5, add(c,c)), add(b,c)), mult(b, a))";
+        ExpressionParser expressionParser = new ExpressionParser(expression);
+        assertEquals(150, expressionParser.getResult());
+    }
+
+    @Test
     void testNullExpression() {
         String expression = null;
         ExpressionParser expressionParser = new ExpressionParser(expression);
@@ -104,23 +110,11 @@ class ExpressionParserTest {
 
     @Test
     public void outOfRangeExpression() {
-        String num = String.valueOf(Integer.MAX_VALUE + 1);
+        String num = String.valueOf(Integer.MAX_VALUE);
         String expression = "add(" + num + ", 1)";
         ExpressionParser expressionParser = new ExpressionParser(expression);
         Exception exception = assertThrows(CalculatorException.class, () -> expressionParser.getResult());
-        assertEquals(INVALID_EXPRESSION, exception.getMessage());
-    }
-
-    /**
-     * Multiplying 5 with Interger.MAX_VALUE should throw an Arithmetic
-     * exception
-     */
-    @Test
-    public void numOutOfBoundMultiplication() throws CalculatorException {
-        String outOfRangeNum = String.valueOf(Integer.MAX_VALUE);
-        String expression = "mult(" + outOfRangeNum + ", 2)";
-        ExpressionParser expressionParser = new ExpressionParser(expression);
-        assertThrows(CalculatorException.class, () -> expressionParser.getResult());
+        assertEquals(OUT_OF_RANGE, exception.getMessage());
     }
 
     /**

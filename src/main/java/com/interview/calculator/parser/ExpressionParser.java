@@ -12,8 +12,22 @@ import java.util.Stack;
 import static com.interview.calculator.constants.Constants.*;
 
 /**
- * Expression Parser class to parse the entire expression and returns the result of the expression
- *
+ * Expression Parser class to parse the entire expression and returns the result of the expression.
+ * <p>
+ * Approach : We're maintaining three different stacks for - variables, operands and functions and use Map to store the values of variables.
+ * We will parse the string character by character as follows :
+ * - if character is digit (a-z, A-Z), append value to string (function)
+ * - if character is number (0-9), append value to number (number)
+ * - if character is open bracket '(', we push the function value to "functions" stack and reset function string
+ * - if character is comma (,) , we compute let expressions or operands
+ * - we compute variables as part of let expessions if top function of stack is let, and store them in map
+ * - we compute operands and push to operands stack
+ * - if character is closing bracket ')', we will calculate the recent expression using the values from the stacks and variableMap,
+ * and pushes the computed result back to operands stack
+ * <p>
+ * Once the entire string is passed, operands stack will have the result value.
+ * <p>
+ * if expression is invalid, operands stack will be empty and will throw appropriate exception accordingly.
  */
 public class ExpressionParser {
 
@@ -32,12 +46,18 @@ public class ExpressionParser {
         this.expression = expression;
     }
 
+    /**
+     * Computes the result of entire expression.
+     *
+     * @return
+     * @throws CalculatorException
+     */
     public float getResult() throws CalculatorException {
         if (null == expression || expression.length() == 0) {
             LOGGER.info("Invalid expression : {}" + expression);
             throw new CalculatorException(INVALID_EXPRESSION);
         }
-        Float number = null;
+        Integer number = null;
         StringBuilder function = new StringBuilder();
         for (int i = 0; i < expression.length(); i++) {
             char c = expression.charAt(i);
@@ -54,8 +74,10 @@ public class ExpressionParser {
                 computeVariablesAndOperands(number, function);
                 number = null;
             } else if (c == ')') {
-                if (number != null)
-                    operands.push(number);
+                if (number != null) {
+                    validateNumber(number);
+                    operands.push(Float.valueOf(number));
+                }
                 computeRecentExpression(function);
                 number = null;
             }
@@ -65,6 +87,15 @@ public class ExpressionParser {
         return operands.pop();
     }
 
+    /**
+     * Returns the function value performing respective arithmetic operation
+     *
+     * @param function
+     * @param operand1
+     * @param operand2
+     * @return
+     * @throws CalculatorException
+     */
     private float getFunctionValue(ArithmeticFunctions function, float operand1, float operand2) throws CalculatorException {
         if (null == function)
             return 0;
@@ -85,7 +116,16 @@ public class ExpressionParser {
         }
     }
 
-    private void computeVariablesAndOperands(Float number, StringBuilder function) {
+    /**
+     * Computes variables and operands as part of let expression evaluation.
+     * <p>
+     * We'll evaluate let expression if top value of functions stack is "let" and store them in variableMap otherwise
+     * we will evaluate the operands and push to operands stack.
+     *
+     * @param number
+     * @param function
+     */
+    private void computeVariablesAndOperands(Integer number, StringBuilder function) throws CalculatorException {
         if (functions.peek() == ArithmeticFunctions.LET && !variables.isEmpty()) {
             calculateLetExpression(number, function);
         } else if (functions.peek() == ArithmeticFunctions.LET) {
@@ -96,12 +136,19 @@ public class ExpressionParser {
                 operands.push(variableMap.get(function.toString()));
                 function.setLength(0);
             } else if (number != null) {
-                operands.push(number);
+                validateNumber(number);
+                operands.push(Float.valueOf(number));
             }
         }
     }
 
-    private void calculateLetExpression(Float number, StringBuilder variable) {
+    /**
+     * This method calculate let expressions
+     *
+     * @param number
+     * @param variable
+     */
+    private void calculateLetExpression(Integer number, StringBuilder variable) {
         if (number == null) {
             if (!operands.isEmpty()) {
                 variableMap.put(variables.pop(), operands.pop());
@@ -111,11 +158,17 @@ public class ExpressionParser {
                 variable.setLength(0);
             }
         } else {
-            variableMap.put(variables.pop(), number);
+            variableMap.put(variables.pop(), Float.valueOf(number));
             functions.pop();
         }
     }
 
+    /**
+     * This method computes the value of recent expression and pushes the result back to stack of operands
+     *
+     * @param variable
+     * @throws CalculatorException
+     */
     private void computeRecentExpression(StringBuilder variable) throws CalculatorException {
         Float functionValue = null;
         if (variableMap.containsKey(variable.toString())) {
@@ -126,5 +179,18 @@ public class ExpressionParser {
         }
         if (functionValue != null)
             operands.push(functionValue);
+    }
+
+    /**
+     * Validates the input numbers.
+     * Number should be within Integer range.
+     *
+     * @param number
+     * @throws CalculatorException
+     */
+    private void validateNumber(float number) throws CalculatorException {
+        int num = (int) number;
+        if(num >= Integer.MAX_VALUE || num <= Integer.MIN_VALUE)
+            throw new CalculatorException(OUT_OF_RANGE);
     }
 }
