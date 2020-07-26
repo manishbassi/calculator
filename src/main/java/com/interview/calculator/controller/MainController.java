@@ -24,7 +24,7 @@ public class MainController {
         validateArguments(args);
         String expression = args[0];
         ExpressionParser expressionParser = new ExpressionParser(expression);
-        System.out.println(expressionParser.getResult());
+        LOGGER.info("Result of the expression : {} is : {}", expression, expressionParser.getResult());
     }
 
     /**
